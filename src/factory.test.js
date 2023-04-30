@@ -1,16 +1,16 @@
-import { createShip, Gameboard } from './factory';
+/* eslint-disable no-undef */
+import { CreateShip, Gameboard } from './factory';
 
 // tests for the Ship factory function
-
 test('ship takes a hit', () => {
-  const testShip = createShip(3);
+  const testShip = CreateShip(3);
   testShip.hit();
   testShip.hit();
   expect(testShip.hitsTaken).toBe(2);
 });
 
 test('ship becomes sunk', () => {
-  const testShip = createShip(1);
+  const testShip = CreateShip(1);
   testShip.hit();
   testShip.checkIfSunk();
   expect(testShip.sunk).toBe(true);
@@ -18,7 +18,7 @@ test('ship becomes sunk', () => {
 
 // tests for the Gameboard factory function
 const testGameboard = Gameboard();
-const carrier = createShip(5);
+const carrier = CreateShip(5);
 
 test('gameboard places ship over specified coordinates', () => {
   expect(testGameboard.placeShip(carrier, [1, 5])).toStrictEqual([
@@ -37,5 +37,11 @@ test('gameboard should be able to determine if an attack was a hit', () => {
 test('gameboard should be able to determine if an attack was a miss', () => {
   expect(testGameboard.receiveAttack([1, 6])).toBe(
     'the attack did not hit anything'
+  );
+});
+
+test('gameboard can report whether or not if all ships have been sunk', () => {
+  expect(testGameboard.checkifAllSunk()).toBe(
+    'There are still ships remaining'
   );
 });

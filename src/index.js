@@ -1,14 +1,23 @@
 import './style.css';
-import { Gameboard, createShip } from './factory';
+import { Gameboard, CreateShip, Player } from './factory';
 
-const carrier = createShip(5);
-const battleship = createShip(4);
+const carrier = CreateShip(5);
+const battleship = CreateShip(4);
 
-const game1 = Gameboard();
-console.log(game1.placeShip(carrier, [1, 5]));
-console.log(game1.placeShip(battleship, [3, 5]));
+const player1gb = Gameboard();
+const player1 = Player('Johny', player1gb);
+console.log(player1);
 
-console.log(game1.receiveAttack([3, 4]));
-console.log(game1.receiveAttack([3, 7]));
+console.log(player1.myGameboard.placeShip(carrier, [1, 5]));
+console.log(player1.myGameboard.placeShip(battleship, [3, 5]));
 
-console.log(game1.checkifAllSunk());
+console.log(player1.myGameboard.receiveAttack([3, 4]));
+console.log(player1.myGameboard.receiveAttack([3, 7]));
+// console.log(player1.myGameboard.receiveAttack([3, 5]));
+// console.log(player1.myGameboard.receiveAttack([3, 3]));
+// console.log(player1.myGameboard.receiveAttack([3, 2]));
+
+console.log(player1.myGameboard.checkifAllSunk());
+console.log(player1.makeRandomMove());
+console.log(player1.makeRandomMove());
+console.log(player1.makeRandomMove());

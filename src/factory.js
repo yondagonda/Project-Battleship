@@ -1,32 +1,28 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 
-export function createShip(shipLength) {
+export function CreateShip(shipLength) {
   return {
     shipLength,
     hitsTaken: 0,
     sunk: false,
     hit() {
-      // hit only registers when clicked on the DOM, it is actually a part of the ship being clicked on
-      // e.g. if (clickedLocation === shipCoordinate) return this.hitsTaken++
-      // or alternatively, make it so hit() only executes when a specific part of the DOM is pressed
       return this.hitsTaken++;
     },
     checkIfSunk() {
       if (this.hitsTaken === shipLength) {
         this.sunk = true;
         console.log('ship has been sunk');
-      } else console.log('not sunk yet'); // take methods outside of factory function?
+      } else console.log('not sunk yet');
     },
   };
 }
 
 export function Gameboard() {
-  const carrier = createShip(5);
-  console.log(carrier);
-  const battleship = createShip(4);
+  const carrier = CreateShip(5);
+  const battleship = CreateShip(4);
   const allShips = []; // this will contain coordinates of all the ships that are currently present on the gameboard
-  const missedAttacks = [];
+  const missedAttacks = []; // stores all attacks missed
   return {
     placeShip(shipType, coordinates) {
       const value = shipType.shipLength;
@@ -38,7 +34,6 @@ export function Gameboard() {
         return console.log('ship placement out of bounds');
 
       console.log(`tail of ship will be [${shipsTail}]`);
-
       const shipArea = [coordinates];
 
       while (coordinates[1] !== shipsTail[1]) {
@@ -49,16 +44,16 @@ export function Gameboard() {
       return shipArea;
     },
     receiveAttack(coordinates) {
-      console.log(allShips);
+      console.log('The current positions of all ships on the board:', allShips);
       let found = false;
       for (let i = 0; i < allShips.length; i++) {
         for (let j = 0; j < allShips[i].length; j++) {
-          console.log(allShips[i][j]);
+          // console.log(allShips[i][j]);
           if (
             allShips[i][j][0] === coordinates[0] &&
             allShips[i][j][1] === coordinates[1]
           ) {
-            console.log(allShips[i]);
+            console.log('This attack hits a part of the ship:', allShips[i]);
             if (allShips[i].length === 5) {
               carrier.hit();
               console.log(carrier);
@@ -77,17 +72,17 @@ export function Gameboard() {
       if (found) return 'the hit was successful';
 
       missedAttacks.push(coordinates);
-      console.log(`missed attacks so far:`, missedAttacks);
+      console.log(`Missed attacks so far:`, missedAttacks);
       return 'the attack did not hit anything';
     },
     checkifAllSunk() {
-      console.log(allShips);
-      if (allShips.length === 0) return 'All ships have been sunk';
-      return 'Ships stil remaining';
+      carrier.checkIfSunk();
+      battleship.checkIfSunk(); // do the same for the rest of the other ship types
+      if (battleship.sunk && carrier.sunk) return 'All ships have been sunk!';
+      return 'There are still ships remaining';
     },
   };
 }
-
 // Game function: ships can only be placed vertically at first, with a rotate button available after
 // ships need to have a 'head' of sorts, which will serve as its axis point of rotation and cursor placeholder
 
@@ -96,3 +91,26 @@ export function Gameboard() {
 // Cruiser: length 3
 // Submarine: length 3
 // Destroyer: length 2
+
+export function Player(name, myGameboard) {
+  const returnedCoordinates = []; // ensure random moves made wont repeat
+  return {
+    name,
+    myTurn: false,
+    myGameboard,
+    makeRandomMove() {
+      let randomCoordinate = [
+        Math.floor(Math.random() * 10) + 1,
+        Math.floor(Math.random() * 10) + 1,
+      ];
+      while (returnedCoordinates.includes(JSON.stringify(randomCoordinate))) {
+        randomCoordinate = [
+          Math.floor(Math.random() * 10) + 1,
+          Math.floor(Math.random() * 10) + 1,
+        ];
+      }
+      returnedCoordinates.push(JSON.stringify(randomCoordinate));
+      return randomCoordinate;
+    },
+  }; // put OpponentGameBoard as another function parameter?
+}

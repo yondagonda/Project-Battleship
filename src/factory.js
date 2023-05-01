@@ -81,6 +81,9 @@ export function Gameboard() {
       if (battleship.sunk && carrier.sunk) return 'All ships have been sunk!';
       return 'There are still ships remaining';
     },
+    getAllShips() {
+      return allShips;
+    },
   };
 }
 // Game function: ships can only be placed vertically at first, with a rotate button available after
@@ -93,7 +96,7 @@ export function Gameboard() {
 // Destroyer: length 2
 
 export function Player(name, myGameboard) {
-  const returnedCoordinates = []; // ensure random moves made wont repeat
+  const returnedCoordinates = []; // ensures random moves made wont repeat
   return {
     name,
     myTurn: false,

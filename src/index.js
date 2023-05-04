@@ -1,43 +1,57 @@
 /* eslint-disable import/no-cycle */
 import './style.css';
 import { Gameboard, CreateShip, Player } from './factory';
-import { generateGrid, renderShip } from './DOMInteraction';
+import { generateGrid, renderShip, hideGrid } from './DOMInteraction';
 
 generateGrid('player');
 generateGrid('opponent');
 
-const carrier = CreateShip(5);
-const battleship = CreateShip(4);
+// enable some kind of 'Start Game' popup button here
+// once that button is clicked, then hide player1 grid as seen below:
+hideGrid('player'); // player1s grid starts hidden at first
 
 const player1gb = Gameboard();
 export const player1 = Player('Johny', player1gb);
 player1.myTurn = true; // player1 always starts first move
-
 const player2gb = Gameboard();
 export const player2 = Player('Computer', player2gb);
 
 console.log(player1);
 console.log(player2);
 
-const p1carrier = player1.myGameboard.placeShip(carrier, [1, 5]);
+const carrier = CreateShip(5);
+const battleship = CreateShip(4);
+const cruiser = CreateShip(3);
+const submarine = CreateShip(2);
+const sinkboat = CreateShip(1);
+
+const p1carrier = player1.myGameboard.placeShip(carrier, [1, 10]);
 renderShip(p1carrier, 'player');
-const p1battleship = player1.myGameboard.placeShip(battleship, [3, 5]);
+const p1battleship = player1.myGameboard.placeShip(battleship, [3, 4]);
 renderShip(p1battleship, 'player');
-console.log(player1.myGameboard.getAllShips());
+const p1cruiser = player1.myGameboard.placeShip(cruiser, [5, 8]);
+renderShip(p1cruiser, 'player');
+const p1submarine = player1.myGameboard.placeShip(submarine, [10, 10]);
+renderShip(p1submarine, 'player');
+const p1sinkboat = player1.myGameboard.placeShip(sinkboat, [10, 1]);
+renderShip(p1sinkboat, 'player');
 
 const p2carrier = player2.myGameboard.placeShip(carrier, [6, 8]);
 renderShip(p2carrier, 'opponent');
 const p2battleship = player2.myGameboard.placeShip(battleship, [4, 6]);
 renderShip(p2battleship, 'opponent');
-console.log(player2.myGameboard.getAllShips());
+const p2cruiser = player2.myGameboard.placeShip(cruiser, [10, 4]);
+renderShip(p2cruiser, 'opponent');
+const p2submarine = player2.myGameboard.placeShip(submarine, [1, 4]);
+renderShip(p2submarine, 'opponent');
+const p2sinkboat = player2.myGameboard.placeShip(sinkboat, [2, 10]);
+renderShip(p2sinkboat, 'opponent');
 
-console.log(player2.makeRandomMove());
-// need to make it so receiveAttack(player2.makeRandomMove()), but only execute when its computers turn
+// THINGS TO DO:
+// focus on cleaning up our code/program, make it more clear/efficient for now
 
-// Game function: ships can only be placed vertically at first, with a rotate button available after
-// ships need to have a 'head' of sorts, which will serve as its axis point of rotation and cursor placeholder
-// Carrier: length 5
-// Battleship: length 4
-// Cruiser: length 3
-// Submarine: length 3
-// Destroyer: length 2
+// obscure opponent ship locations
+// put ObscureComputerShips() here? the function will set the computer side cells background color to white
+
+// make a function that randomly place ships on behalf of the user on refresh, then allow drag and drop?
+// e.g. randomiseShips(playerOrComputersGrid)

@@ -4,7 +4,7 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable import/prefer-default-export */
 import { player1, player2 } from '.';
-import { changeTurns } from './game';
+import { changeTurns, commenceComputerAttack } from './game';
 
 let playerTable = document.querySelector('.player-square');
 
@@ -32,17 +32,52 @@ function enableCellFunctionality(cell) {
   cell.addEventListener('click', (e) => {
     const clickedPos = e.target.dataset.id;
     const result = clickedPos.split(',').map(Number);
-    console.log(result);
 
     if (player1.myTurn === true) {
       player2.myGameboard.receiveAttack(result);
-      console.log('now player 2 turn');
-    }
-    if (player2.myTurn === true) {
-      player1.myGameboard.receiveAttack(result);
-      console.log('now player 1 turn');
+      hideGrid('opponent');
+      revealGrid('player');
     }
     changeTurns();
+    commenceComputerAttack();
+  });
+}
+
+export function endGame() {
+  const cells = document.querySelectorAll('td');
+  cells.forEach((cell) => {
+    cell.style.pointerEvents = 'none';
+  });
+  // enable some kind of popup here, to ask if play again, etc.
+}
+
+export function hideGrid(grid) {
+  let cells = document.querySelectorAll('.player-td');
+  let theGrid = document.querySelector('.player-square');
+
+  if (grid === 'opponent') {
+    cells = document.querySelectorAll('.opponent-td');
+    theGrid = document.querySelector('.opponent-square');
+    theGrid.style.pointerEvents = 'none';
+  }
+  theGrid.style.pointerEvents = 'none';
+  cells.forEach((cell) => {
+    cell.style.border = '1px solid rgba(0, 0, 0, 0.05)';
+  });
+}
+
+export function revealGrid(grid) {
+  let cells = document.querySelectorAll('.player-td');
+  let theGrid = document.querySelector('.player-square');
+
+  if (grid === 'opponent') {
+    cells = document.querySelectorAll('.opponent-td');
+    theGrid = document.querySelector('.opponent-square');
+    theGrid.style.pointerEvents = 'auto';
+  }
+  theGrid.style.pointerEvents = 'auto';
+  cells.forEach((cell) => {
+    cell.style.border = '1px solid rgb(0, 0, 0, 0.5)';
   });
 }
 

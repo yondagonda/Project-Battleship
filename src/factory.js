@@ -1,7 +1,4 @@
-/* eslint-disable no-alert */
 /* eslint-disable import/no-cycle */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-plusplus */
 import {
   displayMissedAttacks,
   displaySuccessfulHits,
@@ -20,8 +17,6 @@ export function CreateShip(shipLength) {
     checkIfSunk() {
       if (this.hitsTaken === shipLength) {
         this.sunk = true;
-        // console.log('SHIP HAS BEEN SUNK');
-        // enable some kind of css styling to the sunken ship here?
       }
     },
   };
@@ -44,10 +39,9 @@ export function Gameboard() {
         return console.log('ship placement out of bounds');
 
       const shipArea = [coordinates];
-
       while (coordinates[1] !== shipsTail[1]) {
-        coordinates = [coordinates[0], coordinates[1] - 1]; // if statements gonna be needed here?
-        shipArea.push(coordinates); // this is ONLY FOR VERTICAL alignment, need another while loop for horizontal?
+        coordinates = [coordinates[0], coordinates[1] - 1];
+        shipArea.push(coordinates);
       }
       allShips.push(shipArea);
       return shipArea;
@@ -94,7 +88,6 @@ export function Gameboard() {
         }
       }
       if (this.checkifAllSunk()) {
-        console.log(`${whoseTurnIsIt()} has won!`);
         endGame();
       }
       if (found) return 'the hit was successful';
@@ -140,81 +133,59 @@ export function Player(name, myGameboard) {
         randomCoordinate = returnRandomCoordinate();
       }
       returnedCoordinates.push(JSON.stringify(randomCoordinate));
-      console.log(returnedCoordinates);
       return randomCoordinate;
     },
-    hitAboveSquare() {
+    hitAdjacentSquare(direction) {
       const coordsReturnedSoFar = returnedCoordinates.map((str) =>
         JSON.parse(str)
       );
       const lastCoordValue =
         coordsReturnedSoFar[coordsReturnedSoFar.length - 1];
-
-      adjacentHitsSoFar.push(lastCoordValue); // use this array to get the first adj hit value, so that we can target below square
-      console.log(adjacentHitsSoFar);
-
-      let aboveSquare = [lastCoordValue[0], lastCoordValue[1] + 1];
-      console.log(aboveSquare);
-      const origin = adjacentHitsSoFar[0];
-      console.log(`Origin point is: ${origin}`);
-
-      while (
-        returnedCoordinates.includes(JSON.stringify(aboveSquare)) ||
-        aboveSquare[1] > 10
-      ) {
-        const blockLower = [origin[0], origin[1] - 1];
-        console.log(blockLower);
-        if (returnedCoordinates.includes(JSON.stringify(blockLower))) {
-          aboveSquare = returnRandomCoordinate();
-        } else {
-          aboveSquare = blockLower;
-        }
-      }
-      while (aboveSquare[1] < 1) {
-        aboveSquare = returnRandomCoordinate();
-        while (returnedCoordinates.includes(JSON.stringify(aboveSquare))) {
-          aboveSquare = returnRandomCoordinate();
-        }
-      }
-      console.log(aboveSquare);
-
-      returnedCoordinates.push(JSON.stringify(aboveSquare));
-      console.log(returnedCoordinates);
-      return aboveSquare;
-    },
-    hitBelowSquare() {
-      const coordsReturnedSoFar = returnedCoordinates.map((str) =>
-        JSON.parse(str)
-      );
-      const lastCoordValue =
-        coordsReturnedSoFar[coordsReturnedSoFar.length - 1];
-
       adjacentHitsSoFar.push(lastCoordValue);
-      console.log(adjacentHitsSoFar);
-
-      let belowSquare = [lastCoordValue[0], lastCoordValue[1] - 1];
-      console.log(belowSquare);
-      while (returnedCoordinates.includes(JSON.stringify(belowSquare))) {
-        const origin = adjacentHitsSoFar[0];
-        const blockLower = [origin[0], origin[1] - 1];
-        if (returnedCoordinates.includes(JSON.stringify(blockLower))) {
-          belowSquare = returnRandomCoordinate();
-        } else {
-          belowSquare = blockLower;
+      const origin = adjacentHitsSoFar[0];
+      // IF TARGETTING THE SQUARE BELOW
+      if (direction === 'above') {
+        let aboveSquare = [lastCoordValue[0], lastCoordValue[1] + 1];
+        while (
+          returnedCoordinates.includes(JSON.stringify(aboveSquare)) ||
+          aboveSquare[1] > 10
+        ) {
+          const blockLower = [origin[0], origin[1] - 1];
+          if (returnedCoordinates.includes(JSON.stringify(blockLower))) {
+            aboveSquare = returnRandomCoordinate();
+          } else {
+            aboveSquare = blockLower;
+          }
         }
+        while (aboveSquare[1] < 1) {
+          aboveSquare = returnRandomCoordinate();
+          while (returnedCoordinates.includes(JSON.stringify(aboveSquare))) {
+            aboveSquare = returnRandomCoordinate();
+          }
+        }
+        returnedCoordinates.push(JSON.stringify(aboveSquare));
+        return aboveSquare;
       }
-      while (belowSquare[1] < 1) {
-        console.log('we going sub zero');
-        belowSquare = returnRandomCoordinate();
+      // IF TARGETTING THE SQUARE ABOVE
+      if (direction === 'below') {
+        let belowSquare = [lastCoordValue[0], lastCoordValue[1] - 1];
         while (returnedCoordinates.includes(JSON.stringify(belowSquare))) {
-          belowSquare = returnRandomCoordinate();
+          const blockLower = [origin[0], origin[1] - 1];
+          if (returnedCoordinates.includes(JSON.stringify(blockLower))) {
+            belowSquare = returnRandomCoordinate();
+          } else {
+            belowSquare = blockLower;
+          }
         }
+        while (belowSquare[1] < 1) {
+          belowSquare = returnRandomCoordinate();
+          while (returnedCoordinates.includes(JSON.stringify(belowSquare))) {
+            belowSquare = returnRandomCoordinate();
+          }
+        }
+        returnedCoordinates.push(JSON.stringify(belowSquare));
+        return belowSquare;
       }
-      console.log(belowSquare);
-
-      returnedCoordinates.push(JSON.stringify(belowSquare));
-      console.log(returnedCoordinates);
-      return belowSquare;
     },
   };
 }

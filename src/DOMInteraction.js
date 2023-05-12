@@ -1,10 +1,36 @@
 /* eslint-disable no-use-before-define */
 /* eslint-disable import/no-cycle */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-plusplus */
-/* eslint-disable import/prefer-default-export */
 import { player1, player2 } from '.';
-import { changeTurns, commenceComputerAttack } from './game';
+import { changeTurns, commenceComputerAttack, whoseTurnIsIt } from './game';
+
+const startButton = document.querySelector('.start-game');
+startButton.addEventListener('click', startGame);
+
+function startGame() {
+  startButton.style.display = 'none';
+  document.querySelector('.randomise-ships').style.display = 'none';
+  hideGrid('player');
+  revealGrid('opponent');
+
+  const cell = document.querySelectorAll('td');
+  cell.forEach((box) => {
+    box.addEventListener('click', (e) => {
+      const clickedPos = e.target.dataset.id;
+      const result = clickedPos.split(',').map(Number);
+      if (player1.myTurn === true) {
+        player2.myGameboard.receiveAttack(result);
+        hideGrid('opponent');
+        revealGrid('player');
+      }
+      changeTurns();
+      commenceComputerAttack();
+    });
+  });
+}
+
+document.querySelector('.randomise-ships').addEventListener('click', () => {
+  location.reload();
+});
 
 let playerTable = document.querySelector('.player-square');
 
@@ -22,25 +48,9 @@ export function generateGrid(playerOrOpponent) {
         cell.className = 'opponent-td';
       }
       cell.dataset.id = [i, j];
-      enableCellFunctionality(cell);
     }
     playerTable.appendChild(row);
   }
-}
-
-function enableCellFunctionality(cell) {
-  cell.addEventListener('click', (e) => {
-    const clickedPos = e.target.dataset.id;
-    const result = clickedPos.split(',').map(Number);
-
-    if (player1.myTurn === true) {
-      player2.myGameboard.receiveAttack(result);
-      hideGrid('opponent');
-      revealGrid('player');
-    }
-    changeTurns();
-    commenceComputerAttack();
-  });
 }
 
 export function endGame() {
@@ -48,7 +58,7 @@ export function endGame() {
   cells.forEach((cell) => {
     cell.style.pointerEvents = 'none';
   });
-  // enable some kind of popup here, to ask if play again, etc.
+  enablePopup();
 }
 
 export function hideGrid(grid) {
@@ -90,7 +100,7 @@ export function renderShip(shipPositions, playerOrOpponent) {
     shipPositions.forEach((element) => {
       const result = element.join(',');
       if (result === cell.dataset.id) {
-        cell.style.backgroundColor = 'lightblue';
+        cell.style.backgroundColor = 'rgb(90, 90, 224)';
       }
     });
   });
@@ -105,8 +115,8 @@ export function displayMissedAttacks(arr, playerOrOpponent) {
     arr.forEach((element) => {
       const result = element.join(',');
       if (result === cell.dataset.id) {
-        cell.style.backgroundColor = 'red';
         cell.style.pointerEvents = 'none';
+        cell.innerHTML = '❌';
       }
     });
   });
@@ -120,8 +130,29 @@ export function displaySuccessfulHits(coordinate, playerOrOpponent) {
   const result = coordinate.join(',');
   cells.forEach((cell) => {
     if (result === cell.dataset.id) {
-      cell.style.backgroundColor = 'black';
+      cell.style.backgroundColor = 'red';
       cell.style.pointerEvents = 'none';
+      cell.innerHTML = '❌';
     }
   });
 }
+
+export function ObscureComputerShips() {
+  const cells = document.querySelectorAll('.opponent-td');
+  cells.forEach((cell) => {
+    cell.style.backgroundColor = 'white';
+  });
+}
+
+function enablePopup() {
+  const popup = document.querySelector('.popup');
+  popup.style.display = 'block';
+
+  const popupText = document.querySelector('.popup-text');
+  popupText.innerHTML = `${whoseTurnIsIt().toUpperCase()} has won!`;
+}
+
+const playAgain = document.querySelector('.play-again');
+playAgain.addEventListener('click', () => {
+  location.reload();
+});

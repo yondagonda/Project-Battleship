@@ -116,7 +116,7 @@ export function displayMissedAttacks(arr, playerOrOpponent) {
       const result = element.join(',');
       if (result === cell.dataset.id) {
         cell.style.pointerEvents = 'none';
-        cell.innerHTML = '❌';
+        cell.innerHTML = 'x';
       }
     });
   });
@@ -132,7 +132,7 @@ export function displaySuccessfulHits(coordinate, playerOrOpponent) {
     if (result === cell.dataset.id) {
       cell.style.backgroundColor = 'red';
       cell.style.pointerEvents = 'none';
-      cell.innerHTML = '❌';
+      cell.innerHTML = 'x';
     }
   });
 }

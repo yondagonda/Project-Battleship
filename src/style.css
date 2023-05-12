@@ -35,6 +35,7 @@ main {
   display: flex;
   gap: 3em;
   justify-content: center;
+  min-width: 750px;
 }
 
 td {
@@ -43,7 +44,8 @@ td {
   width: 35px;
   text-align: center;
   transform: rotate(270deg);
-  font-size: 1.6em;
+  font-size: 1.5em;
+  color: black;
 }
 
 td:hover {
@@ -63,7 +65,7 @@ td:hover {
   align-items: center;
   flex-direction: column;
   gap: 1em;
-  width: 20%;
+  width: clamp(10%, 20%, 200px);
   margin-inline: auto;
 }
 
